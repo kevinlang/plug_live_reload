@@ -11,8 +11,6 @@ defmodule PlugLiveReload.Socket do
   @impl :cowboy_websocket
   def websocket_init(state) do
     {:ok, _} = Application.ensure_all_started(:plug_live_reload)
-
-    # should be paramaterized in init above probably - how to do that?
     patterns = Application.get_env(:plug_live_reload, :patterns)
 
     if Process.whereis(:phoenix_live_reload_file_monitor) do
