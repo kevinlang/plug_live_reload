@@ -141,5 +141,4 @@ defmodule PlugLiveReloadTest do
   #   assert to_string(conn.resp_body) =~
   #     ~s[var targetWindow = "top";\n]
   # end
-
 end

@@ -1,37 +1,34 @@
 defmodule PlugLiveReload do
   @moduledoc """
-  Router for live-reload detection in development.
+  Plug for live-reload detection in development. Specifically, this plug
+  injects some Javascript at the bottom of each HTML page that listens to
+  websocket events from `PlugLiveReload.Socket`. That Javascript will
+  update the page.
 
   ## Usage
 
-  Add the `Phoenix.LiveReloader` plug within a `code_reloading?` block
-  in your Endpoint, ie:
+  Add the `PlugLiveReload` plug to your router. E.g.,
 
-      if code_reloading? do
-        socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
-        plug Phoenix.CodeReloader
-        plug Phoenix.LiveReloader
+      defmodule ExtaticExample.Router do
+        use Plug.Router
+
+        plug PlugLiveReload
+        plug :match
+        plug :dispatch
+
+        # rest of router
       end
+
+  This router is dependent on `PlugLiveReload.Socket` being configured for your
+  application as well, as it communicates with it for the live reload functionality.
 
   ## Configuration
 
-  All live-reloading configuration must be done inside the `:live_reload`
-  key of your endpoint, such as this:
+  This plug is configured via opts passed to the plug. E.g.,
 
-      config :my_app, MyApp.Endpoint,
-        ...
-        live_reload: [
-          patterns: [
-            ~r{priv/static/.*(js|css|png|jpeg|jpg|gif)$},
-            ~r{lib/my_app_web/views/.*(ex)$},
-            ~r{lib/my_app_web/templates/.*(eex)$}
-          ]
-        ]
+      plug PlugLiveReload, target_window: :top
 
   The following options are supported:
-
-    * `:patterns` - a list of patterns to trigger the live reloading.
-      This option is required to enable any live reloading.
 
     * `:iframe_attrs` - attrs to be given to the iframe injected by
       live reload. Expects a keyword list of atom keys and string values.
@@ -39,24 +36,6 @@ defmodule PlugLiveReload do
     * `:target_window` - the window that will be reloaded, as an atom.
       Valid values are `:top` and `:parent`. An invalid value will
       default to `:top`.
-
-    * `:url` - the URL of the live reload socket connection. By default
-      it will use the browser's host and port.
-
-    * `:suffix` - if you are running live-reloading on an umbrella app,
-      you may want to give a different suffix to each socket connection.
-      You can do so with the `:suffix` option:
-
-          live_reload: [
-            suffix: "/proxied/app/path"
-          ]
-
-      And then configure the endpoint to use the same suffix:
-
-          if code_reloading? do
-            socket "/phoenix/live_reload/socket/proxied/app/path", Phoenix.LiveReloader.Socket
-            ...
-          end
 
   """
 
@@ -168,5 +147,4 @@ defmodule PlugLiveReload do
   defp get_target_window(:parent), do: "parent"
 
   defp get_target_window(_), do: "top"
-
 end
