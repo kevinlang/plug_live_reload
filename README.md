@@ -60,6 +60,9 @@ config :plug_live_reload,
   ]
 ```
 
+You can find additional documentation for configuring the `PlugLiveReload` plug and the `PlugLiveReload.Socket` 
+in their respective documentation pages.
+
 ## Backends
 
 This project uses [`FileSystem`](https://github.com/falood/file_system) as a dependency to watch your filesystem whenever there is a change and it supports the following operating systems:
@@ -72,14 +75,14 @@ This project uses [`FileSystem`](https://github.com/falood/file_system) as a dep
 There is also a `:fs_poll` backend that polls the filesystem and is available on all Operating Systems in case you don't want to install any dependency. You can configure the `:backend` in your `config/config.exs`:
 
 ```elixir
-config :phoenix_live_reload,
+config :plug_live_reload,
   backend: :fs_poll
 ```
 
 By default the entire application directory is watched by the backend. However, with some environments and backends, this may be inefficient, resulting in slow response times to file modifications. To account for this, it's also possible to explicitly declare a list of directories for the backend to watch, and additional options for the backend:
 
 ```elixir
-config :phoenix_live_reload,
+config :plug_live_reload,
   dirs: [
     "priv/static",
     "priv/gettext",
