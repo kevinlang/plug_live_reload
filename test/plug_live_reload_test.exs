@@ -111,7 +111,7 @@ defmodule PlugLiveReloadTest do
       |> PlugLiveReload.call(target_window: :parent)
 
     assert to_string(conn.resp_body) =~
-      ~s[var targetWindow = "parent";\n]
+             ~s[var targetWindow = "parent";\n]
   end
 
   test "wrong window target defaults to top" do
@@ -120,6 +120,6 @@ defmodule PlugLiveReloadTest do
       |> PlugLiveReload.call([])
 
     assert to_string(conn.resp_body) =~
-      ~s[var targetWindow = "top";\n]
+             ~s[var targetWindow = "top";\n]
   end
 end

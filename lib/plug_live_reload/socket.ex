@@ -31,7 +31,6 @@ defmodule PlugLiveReload.Socket do
 
   """
 
-
   require Logger
 
   @behaviour :cowboy_websocket
