@@ -16,11 +16,18 @@ defmodule PlugLiveReload do
         plug :match
         plug :dispatch
 
-        # rest of router
+        get "/" do
+          conn
+          |> put_resp_content_type("text/html")
+          |> send_resp(200, "<html><body><h1>Plug</h1></body></html>")
+        end
       end
 
-  This router is dependent on `PlugLiveReload.Socket` being configured for your
-  application as well, as it communicates with it for the live reload functionality.
+  This plug will only inject the Javascript if the content type of the response is `text/html`.
+  This can be done with `Plug.Conn.put_resp_content_type/3`, as shown above.
+
+  Additionally, this plug will only inject Javascript if the HTML response
+  has a `<body>` tag.
 
   ## Configuration
 
@@ -76,13 +83,7 @@ defmodule PlugLiveReload do
   end
 
   def call(conn, opts) do
-    patterns = Application.get_env(:plug_live_reload, :patterns)
-
-    if patterns && patterns != [] do
-      before_send_inject_reloader(conn, opts)
-    else
-      conn
-    end
+    before_send_inject_reloader(conn, opts)
   end
 
   defp before_send_inject_reloader(conn, opts) do

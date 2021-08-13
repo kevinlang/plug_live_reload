@@ -27,8 +27,16 @@ defmodule PlugLiveReload.Socket do
 
   ## Configuration
 
-  TODO
+  This socket will only send events informing the page to reload if it the path of the changed
+  resource matches any of the configured `:patterns`.
 
+        config :plug_live_reload,
+          patterns: [
+            ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
+          ]
+
+  The configuration above will send an event if any of the JS/CSS/etc files in the `priv/static`
+  change.
   """
 
   require Logger
@@ -44,8 +52,8 @@ defmodule PlugLiveReload.Socket do
   def websocket_init(state) do
     {:ok, _} = Application.ensure_all_started(:plug_live_reload)
 
-    if Process.whereis(:phoenix_live_reload_file_monitor) do
-      FileSystem.subscribe(:phoenix_live_reload_file_monitor)
+    if Process.whereis(:plug_live_reload_file_monitor) do
+      FileSystem.subscribe(:plug_live_reload_file_monitor)
       {:ok, state}
     else
       Logger.warn("live reload backend not running")
@@ -60,7 +68,7 @@ defmodule PlugLiveReload.Socket do
 
   @impl :cowboy_websocket
   def websocket_info({:file_event, _pid, {path, _event}}, state) do
-    patterns = Map.get(state, :patterns, [])
+    patterns = Application.get_env(:plug_live_reload, :patterns, [])
 
     if matches_any_pattern?(path, patterns) do
       asset_type = remove_leading_dot(Path.extname(path))
