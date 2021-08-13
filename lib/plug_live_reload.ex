@@ -12,7 +12,10 @@ defmodule PlugLiveReload do
       defmodule MyApp.Router do
         use Plug.Router
 
-        plug PlugLiveReload
+        if Mix.env() == :dev do
+          plug PlugLiveReload
+        end
+
         plug :match
         plug :dispatch
 

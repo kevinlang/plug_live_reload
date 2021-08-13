@@ -8,22 +8,34 @@ defmodule PlugLiveReload.Socket do
 
   Add the `PlugLiveReload.Socket` to your `Plug.Cowboy` child spec.
 
-      children = [
-        {Plug.Cowboy, scheme: :http, plug: MyApp.Router, options: [
-          port: 4000,
-          dispatch:  [
-            {:_,
+        def start(_type, _args) do
+          children = [
+            {Plug.Cowboy, scheme: :http, plug: MyApp.Router, options: [
+              port: 4000,
+              dispatch: dispatch()
+            ]}
+          ]
+
+          opts = [strategy: :one_for_one, name: MyApp.Supervisor]
+          Supervisor.start_link(children, opts)
+        end
+
+        if Mix.env() == :dev do
+          def dispatch(),
+            do: [
+              {:_,
               [
                 {"/plug_live_reload/socket", PlugLiveReload.Socket, []},
                 {:_, Plug.Cowboy.Handler, {MyApp.Router, []}}
-              ]
-            }
-          ]
-        ]}
-      ]
+              ]}
+            ]
+        else
+          def dispatch(), do: nil
+        end
 
   This adds a new `:cowboy_websocket` handler for one route, `/plug_live_reload/socket`.
-  All other routes will continue to be handled as usual by your plug router.
+  All other routes will continue to be handled as usual by your plug router. This also makes it
+  so that handler is not added at all in the `:dev` environment.
 
   ## Configuration
 

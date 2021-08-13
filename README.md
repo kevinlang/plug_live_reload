@@ -9,7 +9,7 @@ You can use `plug_live_reload` in your projects by adding it to your `mix.exs` d
 ```
 defp deps do
  [
-   {:plug_live_reload, "~> 0.1.0"}
+   {:plug_live_reload, "~> 0.1.0", only: :dev}
  ]
 end
 ```
@@ -20,7 +20,10 @@ Once that is done, you will want to add the plug to your `Plug.Router`.
 defmodule MyApp.Router do
   use Plug.Router
 
-  plug PlugLiveReload
+  if Mix.env() == :dev do
+    plug PlugLiveReload
+  end
+  
   plug :match
   plug :dispatch
 
@@ -36,24 +39,37 @@ You will additionally need to make sure the `PlugLiveReload.Socket` handler is a
 to your `Plug.Cowboy` child spec in your application.
 
 ```
-children = [
-  {Plug.Cowboy, scheme: :http, plug: MyApp.Router, options: [
-    port: 4000,
-    dispatch:  [
+def start(_type, _args) do
+  children = [
+    {Plug.Cowboy, scheme: :http, plug: MyApp.Router, options: [
+      port: 4000,
+      dispatch: dispatch()
+    ]}
+  ]
+
+  opts = [strategy: :one_for_one, name: MyApp.Supervisor]
+  Supervisor.start_link(children, opts)
+end
+
+if Mix.env() == :dev do
+  def dispatch(),
+    do: [
       {:_,
-        [
-          {"/plug_live_reload/socket", PlugLiveReload.Socket, []},
-          {:_, Plug.Cowboy.Handler, {MyApp.Router, []}}
-        ]
-      }
+       [
+        {"/plug_live_reload/socket", PlugLiveReload.Socket, []},
+        {:_, Plug.Cowboy.Handler, {MyApp.Router, []}}
+       ]}
     ]
-  ]}
-]
+else
+  def dispatch(), do: nil
+end
 ```
 
 Lastly, you will need to configure which file paths to watch.
 
 ```
+# config/dev.exs
+
 config :plug_live_reload,
   patterns: [
     ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
