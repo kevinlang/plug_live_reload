@@ -6,11 +6,11 @@ defmodule PlugLiveReload.Socket do
 
   ## Usage
 
-  Add the `PlugLiveReload.Socket` to your Cowboy child spec.
+  Add the `PlugLiveReload.Socket` to your `Plug.Cowboy` child spec.
 
       children = [
         {Plug.Cowboy, scheme: :http, plug: MyApp.Router, options: [
-          port: 4040,
+          port: 4000,
           dispatch:  [
             {:_,
               [

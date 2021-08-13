@@ -9,7 +9,7 @@ defmodule PlugLiveReload do
 
   Add the `PlugLiveReload` plug to your router. E.g.,
 
-      defmodule ExtaticExample.Router do
+      defmodule MyApp.Router do
         use Plug.Router
 
         plug PlugLiveReload

@@ -13,7 +13,7 @@ defmodule PlugLiveReload.MixProject do
       deps: deps(),
 
       # Hex
-      description: "Adds live-reload functionality for Plug during development.",
+      description: "Adds live-reload functionality to Plug for development.",
       package: package(),
 
       # Docs
@@ -36,7 +36,8 @@ defmodule PlugLiveReload.MixProject do
     [
       {:file_system, "~> 0.2.1"},
       {:plug, "~> 1.12"},
-      {:cowboy, "~> 2.9"}
+      {:cowboy, "~> 2.9"},
+      {:ex_doc, "~> 0.21", only: :docs, runtime: false}
       # {:jason, "~> 1.2"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
