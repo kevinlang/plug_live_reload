@@ -50,9 +50,9 @@ defmodule PlugLiveReloadTest do
       conn("/")
       |> put_resp_content_type("text/html")
       |> PlugLiveReload.call(opts)
-      |> send_resp(200, "<h1>Phoenix</h1>")
+      |> send_resp(200, "<h1>Plug</h1>")
 
-    assert to_string(conn.resp_body) == "<h1>Phoenix</h1>"
+    assert to_string(conn.resp_body) == "<h1>Plug</h1>"
   end
 
   test "skips live_reload if not html request" do
@@ -83,42 +83,27 @@ defmodule PlugLiveReloadTest do
              ~s(<iframe src="/plug_live_reload/frame")
   end
 
-  # test "injects scoped live_reload with iframe attrs if configured" do
-  #   opts = Phoenix.LiveReloader.init([])
+  test "works with iolists as input" do
+    opts = PlugLiveReload.init([])
 
-  #   conn =
-  #     conn("/")
-  #     |> put_private(:phoenix_endpoint, MyApp.EndpointConfig)
-  #     |> put_resp_content_type("text/html")
-  #     |> Phoenix.LiveReloader.call(opts)
-  #     |> send_resp(200, "<html><body><h1>Phoenix</h1></body></html>")
+    conn =
+      conn("/")
+      |> put_resp_content_type("text/html")
+      |> PlugLiveReload.call(opts)
+      |> send_resp(200, [
+        "<html>",
+        '<bo',
+        [?d, ?y | ">"],
+        "<h1>Plug</h1>",
+        "</b",
+        ?o,
+        'dy>',
+        "</html>"
+      ])
 
-  #   assert to_string(conn.resp_body) ==
-  #            "<html><body><h1>Phoenix</h1><iframe hidden height=\"0\" width=\"0\" src=\"/phoenix/live_reload/frame/foo/bar\" class=\"foo\" data-attr=\"bar\"></iframe></body></html>"
-  # end
-
-  # test "works with iolists as input" do
-  #   opts = Phoenix.LiveReloader.init([])
-
-  #   conn =
-  #     conn("/")
-  #     |> put_private(:phoenix_endpoint, MyApp.Endpoint)
-  #     |> put_resp_content_type("text/html")
-  #     |> Phoenix.LiveReloader.call(opts)
-  #     |> send_resp(200, [
-  #       "<html>",
-  #       '<bo',
-  #       [?d, ?y | ">"],
-  #       "<h1>Phoenix</h1>",
-  #       "</b",
-  #       ?o,
-  #       'dy>',
-  #       "</html>"
-  #     ])
-
-  #   assert to_string(conn.resp_body) ==
-  #            "<html><body><h1>Phoenix</h1><iframe hidden height=\"0\" width=\"0\" src=\"/phoenix/live_reload/frame\"></iframe></body></html>"
-  # end
+    assert to_string(conn.resp_body) ==
+             "<html><body><h1>Plug</h1><iframe hidden height=\"0\" width=\"0\" src=\"/plug_live_reload/frame\"></iframe></body></html>"
+  end
 
   test "window target can be set to parent" do
     conn =
