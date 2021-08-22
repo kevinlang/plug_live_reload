@@ -47,6 +47,13 @@ defmodule PlugLiveReload do
       Valid values are `:top` and `:parent`. An invalid value will
       default to `:top`.
 
+  Additionally, one can disable the plug via an application config. This is
+  useful for disabling it dynamically when running a Mix task, for example.
+  This is typically not needed, as it is preferred to disable it via a
+  `Mix.env()` guard check in your router, instead.
+
+      Application.put_env(:plug_live_reload, :disable_plug, true)
+
   """
 
   import Plug.Conn
@@ -86,7 +93,13 @@ defmodule PlugLiveReload do
   end
 
   def call(conn, opts) do
-    before_send_inject_reloader(conn, opts)
+    disable_plug = Application.get_env(:plug_live_reload, :disable_plug, false)
+
+    if disable_plug do
+      conn
+    else
+      before_send_inject_reloader(conn, opts)
+    end
   end
 
   defp before_send_inject_reloader(conn, opts) do
@@ -119,7 +132,7 @@ defmodule PlugLiveReload do
   defp reload_assets_tag(opts) do
     attrs =
       Keyword.merge(
-        [hidden: true, height: 0, width: 0, src: "/plug_live_reload/frame"],
+        [src: "/plug_live_reload/frame", hidden: true, height: 0, width: 0],
         Keyword.get(opts, :iframe_attrs, [])
       )
 

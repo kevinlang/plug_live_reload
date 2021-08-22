@@ -40,7 +40,7 @@ defmodule PlugLiveReloadTest do
       |> send_resp(200, "<html><body><h1>Plug</h1></body></html>")
 
     assert to_string(conn.resp_body) ==
-             "<html><body><h1>Plug</h1><iframe hidden height=\"0\" width=\"0\" src=\"/plug_live_reload/frame\"></iframe></body></html>"
+             "<html><body><h1>Plug</h1><iframe src=\"/plug_live_reload/frame\" hidden height=\"0\" width=\"0\"></iframe></body></html>"
   end
 
   test "skips live_reload injection if html response missing body tag" do
@@ -66,6 +66,22 @@ defmodule PlugLiveReloadTest do
 
     refute to_string(conn.resp_body) =~
              ~s(<iframe src="/plug_live_reload/frame")
+  end
+
+  test "skips live_reload if :disable_plug" do
+    Application.put_env(:plug_live_reload, :disable_plug, true)
+    opts = PlugLiveReload.init([])
+
+    conn =
+      conn("/")
+      |> put_resp_content_type("text/html")
+      |> PlugLiveReload.call(opts)
+      |> send_resp(200, "<html><body><h1>Plug</h1></body></html>")
+
+    refute to_string(conn.resp_body) =~
+             ~s(<iframe src="/plug_live_reload/frame")
+
+    Application.delete_env(:plug_live_reload, :disable_plug)
   end
 
   test "skips live_reload if body is nil" do
@@ -102,7 +118,7 @@ defmodule PlugLiveReloadTest do
       ])
 
     assert to_string(conn.resp_body) ==
-             "<html><body><h1>Plug</h1><iframe hidden height=\"0\" width=\"0\" src=\"/plug_live_reload/frame\"></iframe></body></html>"
+             "<html><body><h1>Plug</h1><iframe src=\"/plug_live_reload/frame\" hidden height=\"0\" width=\"0\"></iframe></body></html>"
   end
 
   test "window target can be set to parent" do
