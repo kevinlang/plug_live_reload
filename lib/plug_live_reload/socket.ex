@@ -57,7 +57,7 @@ defmodule PlugLiveReload.Socket do
 
   @impl :cowboy_websocket
   def init(request, state \\ %{}) do
-    {:cowboy_websocket, request, state}
+    {:cowboy_websocket, request, state, %{idle_timeout: :infinity}}
   end
 
   @impl :cowboy_websocket
