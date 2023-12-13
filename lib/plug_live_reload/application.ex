@@ -31,7 +31,7 @@ defmodule PlugLiveReload.Application do
         {:ok, pid}
 
       other ->
-        Logger.warn("""
+        Logger.warning("""
         Could not start Plug live-reload because we cannot listen to the file system.
         You don't need to worry! This is an optional feature used during development to
         refresh your browser when you save files and it does not affect production.
