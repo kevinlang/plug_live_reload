@@ -34,7 +34,7 @@ defmodule PlugLiveReload.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:file_system, "~> 0.2.1"},
+      {:file_system, "~> 0.2 or ~> 1.0"},
       {:plug, "~> 1.12"},
       {:cowboy, "~> 2.9"},
       {:ex_doc, "~> 0.21", only: :docs, runtime: false}

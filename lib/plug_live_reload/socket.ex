@@ -68,7 +68,7 @@ defmodule PlugLiveReload.Socket do
       FileSystem.subscribe(:plug_live_reload_file_monitor)
       {:ok, state}
     else
-      Logger.warn("live reload backend not running")
+      Logger.warning("live reload backend not running")
       {:stop, state}
     end
   end
