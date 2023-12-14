@@ -9,7 +9,7 @@ You can use `plug_live_reload` in your projects by adding it to your `mix.exs` d
 ```
 defp deps do
  [
-   {:plug_live_reload, "~> 0.1.0", only: :dev}
+   {:plug_live_reload, "~> 0.2.0", only: :dev}
  ]
 end
 ```
